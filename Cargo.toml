@@ -1,0 +1,21 @@
+[package]
+name = "yandex_music"
+version = "1.0.0"
+authors = ["Geml"]
+description = "yandex music webview"
+repository = "https://github.com/Anton-Euro/yandex-music-desktop"
+license = "MIT"
+edition = "2021"
+build = "build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wry = "0.33.0"
+tray-icon = { version = "0.5.1" }
+image = "0.24.6"
+winit = "0.28.6"
+base64 = "0.21.4"
+
+[build-dependencies]
+winres = "0.1"
