@@ -11,7 +11,7 @@ use wry::{
 
 use tray_icon::{
     menu::{Menu, MenuEvent, MenuItem},
-    TrayIconBuilder,
+    TrayIconBuilder, TrayEvent, ClickEvent,
 };
 
 use base64::{Engine as _, engine::general_purpose};
@@ -50,12 +50,13 @@ fn main() -> wry::Result<()> {
     );
 
     let menu_channel = MenuEvent::receiver();
+    let tray_channel = TrayEvent::receiver();
 
     event_loop.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Wait;
+        *control_flow = ControlFlow::Poll;
     
         match event {
-            Event::NewEvents(StartCause::Init) => println!("Wry has started!"),
+            Event::NewEvents(StartCause::Init) => (),
             Event::WindowEvent {
             event: WindowEvent::CloseRequested,
             ..
@@ -63,6 +64,13 @@ fn main() -> wry::Result<()> {
                 webview.window().set_visible(false);
             },
             _ => (),
+        }
+
+        if let Ok(event) = tray_channel.try_recv() {
+
+            if event.event == ClickEvent::Double {
+                webview.window().set_visible(true);
+            }
         }
 
         if let Ok(event) = menu_channel.try_recv() {
