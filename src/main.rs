@@ -10,7 +10,7 @@ use wry::{
 };
 
 use tray_icon::{
-    menu::{Menu, MenuEvent, MenuItem},
+    menu::{Menu, MenuEvent, MenuItem, MenuId},
     TrayIconBuilder,
 };
 
@@ -35,12 +35,14 @@ fn main() -> wry::Result<()> {
 
     let icon = load_icon(base64_icon);
 
-    let tray_menu = Menu::with_items(&[
+    let tray_menu = Menu::new();
+
+    let _ = tray_menu.append_items(&[
         &MenuItem::new("Развернуть", true, None),
         &MenuItem::new("Выход", true, None)
     ]);
 
-    let mut _tray_icon = Some(
+    let mut tray_icon = Some(
         TrayIconBuilder::new()
             .with_menu(Box::new(tray_menu))
             .with_tooltip("yandex music")
@@ -67,18 +69,19 @@ fn main() -> wry::Result<()> {
 
         if let Ok(event) = menu_channel.try_recv() {
 
-            if event.id == 1000 {
+            if event.id == MenuId("1001".to_string()) {
                 webview.window().set_visible(true); 
             }
 
-            if event.id == 1001 {
+            if event.id == MenuId("1002".to_string()) {
+                tray_icon.take();
                 *control_flow = ControlFlow::Exit
             }
         }
     });
 }
 
-fn load_icon(base64_icon: &str) -> tray_icon::icon::Icon {
+fn load_icon(base64_icon: &str) -> tray_icon::Icon {
     let icon_data = general_purpose::STANDARD.decode(base64_icon).unwrap();
 
     let (icon_rgba, icon_width, icon_height) = {
@@ -89,7 +92,7 @@ fn load_icon(base64_icon: &str) -> tray_icon::icon::Icon {
         let rgba = image.into_raw();
         (rgba, width, height)
     };
-    tray_icon::icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("Failed to open icon")
+    tray_icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("Failed to open icon")
 }
 
 fn load_icon_window(base64_icon: &str) -> wry::application::window::Icon {

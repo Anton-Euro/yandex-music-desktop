@@ -12,7 +12,7 @@ build = "build.rs"
 
 [dependencies]
 wry = "0.33.0"
-tray-icon = { version = "0.5.1" }
+tray-icon = "0.9.0"
 image = "0.24.6"
 winit = "0.28.6"
 base64 = "0.21.4"
